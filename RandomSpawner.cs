@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 
 public class RandomSpawner : MonoBehaviour
@@ -22,44 +23,47 @@ public class RandomSpawner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isDelay[0] == false && isStarted[0] == true)
+        if (BattleManager.Instance.gameStart)
         {
-            isDelay[0] = true;
-            int randEmeny = Random.Range(0, 6);
-            int randSpawnPoint = Random.Range(0, 4);
+            if (isDelay[0] == false && isStarted[0] == true)
+            {
+                isDelay[0] = true;
+                int randEmeny = Random.Range(0, 6);
+                int randSpawnPoint = Random.Range(0, 4);
 
-            Instantiate(enemyPrefabs[randEmeny], spawnPoints[randSpawnPoint].position, transform.rotation);
-            StartCoroutine(level1_SpawnTimer());
-        }
+                PhotonNetwork.Instantiate(enemyPrefabs[randEmeny].name, spawnPoints[randSpawnPoint].position, transform.rotation);
+                StartCoroutine(level1_SpawnTimer());
+            }
 
-        if (isDelay[1] == false && isStarted[1] == true)
-        {
-            isDelay[1] = true;
-            int randEmeny = Random.Range(6, 12);
-            int randSpawnPoint = Random.Range(4, 8);
+            if (isDelay[1] == false && isStarted[1] == true)
+            {
+                isDelay[1] = true;
+                int randEmeny = Random.Range(6, 12);
+                int randSpawnPoint = Random.Range(4, 8);
 
-            Instantiate(enemyPrefabs[randEmeny], spawnPoints[randSpawnPoint].position, transform.rotation);
-            StartCoroutine(level2_SpawnTimer());
-        }
+                PhotonNetwork.Instantiate(enemyPrefabs[randEmeny].name, spawnPoints[randSpawnPoint].position, transform.rotation);
+                StartCoroutine(level2_SpawnTimer());
+            }
 
-        if (isDelay[2] == false && isStarted[2] == true)
-        {
-            isDelay[2] = true;
-            int randEmeny = Random.Range(12, 15);
-            int randSpawnPoint = Random.Range(8, 12);
+            if (isDelay[2] == false && isStarted[2] == true)
+            {
+                isDelay[2] = true;
+                int randEmeny = Random.Range(12, 15);
+                int randSpawnPoint = Random.Range(8, 12);
 
-            Instantiate(enemyPrefabs[randEmeny], spawnPoints[randSpawnPoint].position, transform.rotation);
-            StartCoroutine(level3_SpawnTimer());
-        }
+                PhotonNetwork.Instantiate(enemyPrefabs[randEmeny].name, spawnPoints[randSpawnPoint].position, transform.rotation);
+                StartCoroutine(level3_SpawnTimer());
+            }
 
-        if (isDelay[3] == false && isStarted[3] == true)
-        {
-            isDelay[3] = true;
-            int randEmeny = Random.Range(15, 18);
-            int randSpawnPoint = Random.Range(12, 16);
+            if (isDelay[3] == false && isStarted[3] == true)
+            {
+                isDelay[3] = true;
+                int randEmeny = Random.Range(15, 18);
+                int randSpawnPoint = Random.Range(12, 16);
 
-            Instantiate(enemyPrefabs[randEmeny], spawnPoints[randSpawnPoint].position, transform.rotation);
-            StartCoroutine(level4_SpawnTimer());
+                PhotonNetwork.Instantiate(enemyPrefabs[randEmeny].name, spawnPoints[randSpawnPoint].position, transform.rotation);
+                StartCoroutine(level4_SpawnTimer());
+            }
         }
     }
 

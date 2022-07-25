@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Pun;
+using Photon.Realtime;
+using TMPro;
 
 public class Player : MonoBehaviour
 {
@@ -28,7 +31,7 @@ public class Player : MonoBehaviour
 
     // 수정 전
     public GameObject swordPrefab;
-    GameObject swordObject;
+    GameObject swordObject1;
     GameObject swordObject2;
     GameObject swordObject3;
     GameObject swordObject4;
@@ -45,6 +48,10 @@ public class Player : MonoBehaviour
     public Material spriteDefault;
     public Material paintWhite;
 
+    // Photon
+    private PhotonView pv;
+    private TextMeshProUGUI playerCount;
+
 
     // Start is called before the first frame update
     void Start()
@@ -52,6 +59,11 @@ public class Player : MonoBehaviour
         rigidBody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        GameObject temp = GameObject.Find("Floating Joystick");
+        joystick = temp.GetComponent<FloatingJoystick>();
+        playerCount = GameObject.Find("PlayerCount").GetComponent<TextMeshProUGUI>();
+
 
         StartCoroutine(AutoAttack_Sword());
 
@@ -61,10 +73,22 @@ public class Player : MonoBehaviour
         isInvincible = false;
 
         levelUpCanvas.SetActive(false);
+        
+        pv = GetComponent<PhotonView>();
+
     }
 
     // Update is called once per frame
     void Update()
+    {
+        if (pv.IsMine)
+        {
+            Move();
+            playerCount.SetText(PhotonNetwork.CurrentRoom.PlayerCount.ToString()+"/10");
+        }
+
+    }
+    void Move()
     {
         //이동
         x = joystick.Horizontal;
@@ -149,8 +173,8 @@ public class Player : MonoBehaviour
     {
         while (true)
         {
-            swordObject = Instantiate(swordPrefab);
-            swordObject.GetComponent<Sword>().parent = gameObject;
+            swordObject1 = Instantiate(swordPrefab);
+            swordObject1.GetComponent<Sword>().parent = gameObject;
             swordObject2 = Instantiate(swordPrefab);
             swordObject2.GetComponent<Sword>().parent = gameObject;
             swordObject3 = Instantiate(swordPrefab);
@@ -168,15 +192,15 @@ public class Player : MonoBehaviour
             if(attackLV[0] >= 4) {
                 cooltime = 0.5f;    
                 offset = 2.0f;
-                swordObject.transform.position = transform.position + new Vector3(offset, 0, 0);
+                swordObject1.transform.position = transform.position + new Vector3(offset, 0, 0);
                 swordObject2.transform.position = transform.position + new Vector3(-offset, 0, 0);
                 swordObject3.transform.position = transform.position + new Vector3(0, offset, 0);
                 swordObject4.transform.position = transform.position + new Vector3(0, -offset, 0);
-                swordObject.transform.Rotate(new Vector3(0, 0, 180));
+                swordObject1.transform.Rotate(new Vector3(0, 0, 180));
                 swordObject3.transform.Rotate(new Vector3(0, 0, -90));
                 swordObject4.transform.Rotate(new Vector3(0, 0, 90));
 
-                swordObject.transform.localScale = new Vector2(swordObject.transform.localScale.x * 1.25f, swordObject.transform.localScale.y * 1.25f);
+                swordObject1.transform.localScale = new Vector2(swordObject1.transform.localScale.x * 1.25f, swordObject1.transform.localScale.y * 1.25f);
                 swordObject2.transform.localScale = new Vector2(swordObject2.transform.localScale.x * 1.25f, swordObject2.transform.localScale.y * 1.25f);
                 swordObject3.transform.localScale = new Vector2(swordObject3.transform.localScale.x * 1.25f, swordObject3.transform.localScale.y * 1.25f);
                 swordObject4.transform.localScale = new Vector2(swordObject4.transform.localScale.x * 1.25f, swordObject4.transform.localScale.y * 1.25f);
@@ -190,35 +214,35 @@ public class Player : MonoBehaviour
                 {
                     if (isRight)
                     {
-                        swordObject.transform.position = transform.position + new Vector3(offset, 0, 0);
-                        swordObject.transform.Rotate(new Vector3(0, 0, 180));
+                        swordObject1.transform.position = transform.position + new Vector3(offset, 0, 0);
+                        swordObject1.transform.Rotate(new Vector3(0, 0, 180));
                     }
                     else
                     {
-                        swordObject.transform.position = transform.position + new Vector3(-offset, 0, 0);
+                        swordObject1.transform.position = transform.position + new Vector3(-offset, 0, 0);
                         swordObject2.transform.Rotate(new Vector3(0, 0, 180));
                     }
                 }
                 else if (isUp)
                 {
-                    swordObject.transform.position = transform.position + new Vector3(0, offset, 0);
-                    swordObject.transform.Rotate(new Vector3(0, 0 ,-90));
+                    swordObject1.transform.position = transform.position + new Vector3(0, offset, 0);
+                    swordObject1.transform.Rotate(new Vector3(0, 0 ,-90));
                     swordObject2.transform.Rotate(new Vector3(0, 0, 90));
                 }
                 else if (isDown)
                 {
-                    swordObject.transform.position = transform.position + new Vector3(0, -offset, 0);
-                    swordObject.transform.Rotate(new Vector3(0, 0, 90));
+                    swordObject1.transform.position = transform.position + new Vector3(0, -offset, 0);
+                    swordObject1.transform.Rotate(new Vector3(0, 0, 90));
                     swordObject2.transform.Rotate(new Vector3(0, 0 ,-90));
                 }
 
 
                 if(attackLV[0] >= 2){
-                    swordObject2.transform.position = new Vector3(2*transform.position.x - swordObject.transform.position.x, 2*transform.position.y - swordObject.transform.position.y, 0); 
+                    swordObject2.transform.position = new Vector3(2*transform.position.x - swordObject1.transform.position.x, 2*transform.position.y - swordObject1.transform.position.y, 0); 
                 }
 
                 if(attackLV[0] >= 3){
-                    swordObject.transform.localScale = new Vector2(swordObject.transform.localScale.x * 1.25f, swordObject.transform.localScale.y * 1.25f);
+                    swordObject1.transform.localScale = new Vector2(swordObject1.transform.localScale.x * 1.25f, swordObject1.transform.localScale.y * 1.25f);
                     swordObject2.transform.localScale = new Vector2(swordObject2.transform.localScale.x * 1.25f, swordObject2.transform.localScale.y * 1.25f);
                 }
 
@@ -228,6 +252,12 @@ public class Player : MonoBehaviour
     }
 
     public void GetDamage(float damage)
+    {
+        pv.RPC("GetDamageRPC", RpcTarget.All, damage);
+    }
+
+    [PunRPC]
+    void GetDamageRPC(float damage)
     {
 
         HP -= damage;

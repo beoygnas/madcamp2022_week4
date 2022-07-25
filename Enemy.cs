@@ -23,6 +23,8 @@ public class Enemy : MonoBehaviour
     public GameObject diamondPrefab;
     GameObject diamondObject;
 
+    private PhotonView pv;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -32,6 +34,9 @@ public class Enemy : MonoBehaviour
         HP = maxHP;
 
         isInvincible = false;
+
+        pv = GetComponent<PhotonView>();
+
     }
 
     // Update is called once per frame
@@ -45,6 +50,7 @@ public class Enemy : MonoBehaviour
         {
             if(Vector3.Magnitude(player[i].transform.position - transform.position) < min)
             {
+                min = Vector3.Magnitude(player[i].transform.position - transform.position);
                 minIndex = i;
             }
         }
@@ -74,7 +80,13 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    public bool GetDamage(float damage)
+    public void GetDamage(float damage)
+    {
+        pv.RPC("GetDamageRPC", RpcTarget.All, damage);
+    }
+
+    [PunRPC]
+    void GetDamageRPC(float damage)
     {
         HP -= damage;
         isInvincible = true;

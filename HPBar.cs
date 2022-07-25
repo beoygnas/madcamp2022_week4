@@ -17,15 +17,9 @@ public class HPBar : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (parent == null)
-        {
-            Destroy(gameObject);
-        }
-        else
+        if (parent != null)
         {
             HP.fillAmount = parent.GetComponent<Player>().HP / parent.GetComponent<Player>().maxHP;
-
-            transform.position = Camera.main.WorldToScreenPoint(parent.transform.position + new Vector3(0, 1, 0));
         }
     }
 }

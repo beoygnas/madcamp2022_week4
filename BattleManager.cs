@@ -1,31 +1,60 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+
 
 public class BattleManager : MonoBehaviour
 {
-    GameObject[] player;
+    public static BattleManager Instance;
 
-    public GameObject canvas;
-    public GameObject HPBarPrefab;
-    GameObject HPBarObject;
+    public bool gameStart = false;
+
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            if (Instance != this)
+                Destroy(this.gameObject);
+        }
+
+        CreatePlayer();
+    }
+
 
     // Start is called before the first frame update
     void Start()
     {
-        player = GameObject.FindGameObjectsWithTag("Player");
-
-        for(int i = 0; i < player.Length; i++)
-        {
-            HPBarObject = Instantiate(HPBarPrefab);
-            HPBarObject.transform.parent = canvas.transform;
-            HPBarObject.GetComponent<HPBar>().parent = player[i];
-        }
+        
     }
 
     // Update is called once per frame
     void Update()
     {
+        // if 10
+        // move player
+        // create monsters
+        if (PhotonNetwork.CurrentRoom.PlayerCount > 1 && gameStart == false)
+        {
+            gameStart = true;
+        }
+
+
+    }
+
+
+    void CreatePlayer()
+    {
+        Transform[] points = GameObject.Find("PlayerSpawnPointGroup").GetComponentsInChildren<Transform>();
+        int idx = Random.Range(1, points.Length);
+
+        GameObject player = PhotonNetwork.Instantiate("Player", points[idx].position, points[idx].rotation, 0);
+
+        Camera.main.GetComponent<MainCamera>().player = player;
 
     }
 }
